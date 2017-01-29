@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NUMBERS</string>
+    <string name="init_message">¡Arma tu ranking!\nAdiciona canales a tu lista</string>
+    <string name="add_channel">Adicionar Canal</string>
+    <string name="visitChannelMessage">Visita nuestro canal, tenemos cursos, tutoriales, tecnología y más</string>
+    <string name="ourChannel">Nuestro canal en YouTube</string>
+    <string name="feedbackMessage">Envianos tus sugerencias y comentarios</string>
+    <string name="sendComment">Enviar mensaje</string>
+    <string name="credits">Créditos</string>
+    <string name="subscriptors">Suscriptores</string>
+    <string name="views">Vistas</string>
+    <string name="videos">Videos</string>
+    <string name="search">Buscar</string>
+    <string name="add">Adicionar</string>
+    <string name="remove">Eliminar</string>
+    <string name="openYouTube">Abrir en YouTube</string>
+    <string name="shareChannel">Compartir canal</string>
+    <string name="update">Actualizar</string>
+    <string name="ascendingOrder">Ascendente</string>
+    <string name="added_channel">Canal adicionado.</string>
+    <string name="network_error">Error de conexión</string>
+    <string name="retry">Reintentar</string>
+    <string name="no_add_more_channels">No se pueden adicionar mas canales</string>
+</resources>

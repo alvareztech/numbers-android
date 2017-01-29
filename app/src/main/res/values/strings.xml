@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NUMBERS</string>
+    <string name="init_message">Build your ranking!\nAdd channels to your list</string>
+    <string name="add_channel">Add channel</string>
+    <string name="visitChannelMessage">Visit our channel, we have courses, tutorials, technology and more</string>
+    <string name="ourChannel">Our channel on YouTube</string>
+    <string name="feedbackMessage">Send us your suggestions and comments.</string>
+    <string name="sendComment">Send message</string>
+    <string name="credits">Credits</string>
+    <string name="subscriptors">Subscribers</string>
+    <string name="views">Views</string>
+    <string name="videos">Videos</string>
+    <string name="search">Search</string>
+    <string name="add">Add</string>
+    <string name="remove">Remove</string>
+    <string name="openYouTube">Open on YouTube</string>
+    <string name="shareChannel">Share channel</string>
+    <string name="update">Update</string>
+    <string name="ascendingOrder">Ascending</string>
+    <string name="added_channel">Channel added.</string>
+    <string name="network_error">Connection error</string>
+    <string name="retry">Retry</string>
+    <string name="no_add_more_channels">You can not be add more channels</string>
+</resources>

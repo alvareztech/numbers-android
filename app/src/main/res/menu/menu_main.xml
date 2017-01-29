@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item
+        android:id="@+id/ascendingItemMenu"
+        android:checkable="true"
+        android:title="@string/ascendingOrder"
+        app:showAsAction="never" />
+
+
+    <item
+        android:id="@+id/updateItemMenu"
+        android:title="@string/update"
+        app:showAsAction="never"
+        />
+
+    <!--<item-->
+    <!--android:id="@+id/subsItemMenu"-->
+    <!--android:title="@string/bySubs"-->
+    <!--app:showAsAction="never" />-->
+
+    <!--<item-->
+    <!--android:id="@+id/viewsItemMenu"-->
+    <!--android:title="@string/byViews"-->
+    <!--app:showAsAction="never" />-->
+
+    <item
+        android:id="@+id/creditsItemMenu"
+        android:title="@string/credits"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/differenceItemMenu"
+        android:title=""
+        app:actionLayout="@layout/toolbar_switch"
+        app:showAsAction="always" />
+
+</menu>
