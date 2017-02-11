@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">NUMBERS</string>
+    <string name="app_name">Numbers</string>
     <string name="init_message">Build your ranking!\nAdd channels to your list</string>
     <string name="add_channel">Add channel</string>
     <string name="visitChannelMessage">Visit our channel, we have courses, tutorials, technology and more</string>
