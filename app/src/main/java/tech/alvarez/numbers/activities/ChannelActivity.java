@@ -1,10 +1,13 @@
 package tech.alvarez.numbers.activities;
 
+import android.arch.lifecycle.LifecycleActivity;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -27,19 +30,19 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import tech.alvarez.numbers.BuildConfig;
 import tech.alvarez.numbers.R;
-import tech.alvarez.numbers.db.AppDatabase;
 import tech.alvarez.numbers.db.entity.ChannelEntity;
 import tech.alvarez.numbers.model.youtube.ChannelsResponse;
 import tech.alvarez.numbers.model.youtube.ItemResponse;
 import tech.alvarez.numbers.utils.Constants;
 import tech.alvarez.numbers.utils.Messages;
 import tech.alvarez.numbers.utils.Util;
+import tech.alvarez.numbers.viewmodel.ChannelViewModel;
 import tech.alvarez.numbers.youtube.RetrofitClient;
 import tech.alvarez.numbers.youtube.YouTubeDataApi;
 
-public class ChannelActivity extends AppCompatActivity {
+public class ChannelActivity extends LifecycleActivity {
 
-    private AppDatabase mDb;
+    private ChannelViewModel mViewModel;
 
     private TextView nameTextView;
     private TextView subsTextView;
@@ -62,23 +65,31 @@ public class ChannelActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_channel);
 
-        mDb = AppDatabase.getDatabase(getApplicationContext());
+        mViewModel = ViewModelProviders.of(this).get(ChannelViewModel.class);
 
         Intent intent = getIntent();
         channelId = intent.getStringExtra("channel_id");
 
         timer = new Timer();
 
-        channelEntity = mDb.channelModel().getChannel(channelId);
-
         initViews();
-        setDataFromRealm();
+        subscribeUiChannel();
     }
 
+    private void subscribeUiChannel() {
+        mViewModel.getChannelLiveData(channelId).observe(this, new Observer<ChannelEntity>() {
+            @Override
+            public void onChanged(@Nullable ChannelEntity channel) {
+                Log.e(Constants.TAG, "onChanged");
+                channelEntity = channel;
+                setChannelUi();
+            }
+        });
+    }
 
     private void initViews() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        setSupportActionBar(toolbar);
 
 
         nameTextView = (TextView) findViewById(R.id.nameTextView);
@@ -90,9 +101,9 @@ public class ChannelActivity extends AppCompatActivity {
         bannerImageView = (ImageView) findViewById(R.id.bannerImageView);
         fab = (FloatingActionButton) findViewById(R.id.fab);
 
-        getSupportActionBar().setTitle("");
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setTitle("");
+//        getSupportActionBar().setHomeButtonEnabled(true);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
 
@@ -132,7 +143,7 @@ public class ChannelActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     ArrayList<ItemResponse> itemResponses = response.body().getItems();
                     if (itemResponses != null && itemResponses.size() > 0) {
-                        saveDataToRealm(itemResponses.get(0));
+                        saveDatabase(itemResponses.get(0));
                     }
                 } else {
                     Log.e(Constants.TAG, " Error: " + response.errorBody());
@@ -148,11 +159,10 @@ public class ChannelActivity extends AppCompatActivity {
                 Messages.showNetwotkError(fab, ChannelActivity.this);
             }
         });
-
     }
 
-    private void saveDataToRealm(ItemResponse itemResponse) {
-        Log.d(Constants.TAG, " saveDataToRealm");
+    private void saveDatabase(ItemResponse itemResponse) {
+        Log.d(Constants.TAG, " saveDatabase");
 
         if (channelEntity != null) {
             channelEntity.setProfileUrl(itemResponse.getSnippet().getThumbnails().getDefaultThumbnail().getUrl());
@@ -160,12 +170,13 @@ public class ChannelActivity extends AppCompatActivity {
             channelEntity.setDescription(itemResponse.getSnippet().getDescription());
             channelEntity.setVideos(Long.parseLong(itemResponse.getStatistics().getVideoCount()));
             channelEntity.setViews(Long.parseLong(itemResponse.getStatistics().getViewCount()));
+            mViewModel.update(channelEntity);
         }
     }
 
 
-    private void setDataFromRealm() {
-        Log.d(Constants.TAG, " setDataFromRealm");
+    private void setChannelUi() {
+        Log.d(Constants.TAG, " setChannelUi");
 
         nameTextView.setText(channelEntity.getName());
         viewsTextView.setText(NumberFormat.getInstance().format(channelEntity.getViews()));
@@ -229,7 +240,7 @@ public class ChannelActivity extends AppCompatActivity {
         call.cancel();
         timer.cancel();
 
-        mDb.channelModel().deleteChannel(channelEntity);
+        mViewModel.delete(channelEntity);
 
         finish();
     }
@@ -254,7 +265,7 @@ public class ChannelActivity extends AppCompatActivity {
         boolean isFavorite = channelEntity.isFavorite();
 
         channelEntity.setFavorite(!isFavorite);
-        mDb.channelModel().updateChannel(channelEntity);
+        mViewModel.update(channelEntity);
 
         if (!isFavorite) {
             fab.setImageResource(R.drawable.ic_star);

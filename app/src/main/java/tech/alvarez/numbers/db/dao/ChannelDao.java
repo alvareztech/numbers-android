@@ -29,7 +29,10 @@ public interface ChannelDao {
     LiveData<List<ChannelEntity>> findFavoriteChannels();
 
     @Query("SELECT * FROM channels WHERE id=:id")
-    ChannelEntity getChannel(String id);
+    ChannelEntity findChannelById(String id);
+
+    @Query("SELECT * FROM channels WHERE id=:id")
+    LiveData<ChannelEntity> findChannel(String id);
 
     @Query("SELECT id FROM channels")
     List<String> getChannelIds();
