@@ -18,6 +18,7 @@ android {
         versionCode 3000
         versionName "3.0"
         signingConfig signingConfigs.config
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }
     buildTypes {
 
