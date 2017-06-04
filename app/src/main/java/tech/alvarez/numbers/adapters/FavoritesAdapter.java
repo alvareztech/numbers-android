@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tech.alvarez.numbers.R;
-import tech.alvarez.numbers.models.db.ChannelRealm;
+import tech.alvarez.numbers.db.entity.ChannelEntity;
 
 /**
  * Created by Daniel Alvarez on 8/15/16.
@@ -24,7 +24,7 @@ import tech.alvarez.numbers.models.db.ChannelRealm;
  */
 public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.ViewHolder> {
 
-    private List<ChannelRealm> dataset;
+    private List<ChannelEntity> dataset;
     private Context context;
 
     public FavoritesAdapter(Context context) {
@@ -40,7 +40,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        ChannelRealm channelRealm = dataset.get(position);
+        ChannelEntity channelRealm = dataset.get(position);
         holder.subsTextView.setText(NumberFormat.getInstance().format(channelRealm.getSubscribers()));
 
         Glide.with(context).load(channelRealm.getProfileUrl())
@@ -67,7 +67,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
         }
     }
 
-    public void setDataset(List<ChannelRealm> dataset) {
+    public void setDataset(List<ChannelEntity> dataset) {
         this.dataset = dataset;
         notifyDataSetChanged();
     }

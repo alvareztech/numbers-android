@@ -16,8 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tech.alvarez.numbers.R;
+import tech.alvarez.numbers.db.AppDatabase;
 import tech.alvarez.numbers.models.youtube.search.ItemSearchResponse;
-import tech.alvarez.numbers.utils.Database;
 
 /**
  * Created by Daniel Alvarez on 8/7/16.
@@ -29,10 +29,13 @@ public class SearchChannelsAdapter extends RecyclerView.Adapter<SearchChannelsAd
     private List<ItemSearchResponse> dataset;
     private OnItemClickListener onItemClickListener;
 
+    private AppDatabase mDb;
+
     public SearchChannelsAdapter(Context context, OnItemClickListener onItemClickListener) {
         this.context = context;
         this.dataset = new ArrayList<>();
         this.onItemClickListener = onItemClickListener;
+        mDb = AppDatabase.getInMemoryDatabase(context.getApplicationContext());
     }
 
     @Override
@@ -51,7 +54,7 @@ public class SearchChannelsAdapter extends RecyclerView.Adapter<SearchChannelsAd
         if (item.getSnippet().getThumbnails().getDefaultThumbnail() != null) {
             url = item.getSnippet().getThumbnails().getDefaultThumbnail().getUrl();
         }
-        if (Database.inTheDatabase(item.getSnippet().getChannelId())) {
+        if (mDb.channelModel().getCountChannels(item.getSnippet().getChannelId()) > 0) {
             holder.addButton.setVisibility(View.GONE);
         } else {
             holder.addButton.setVisibility(View.VISIBLE);

@@ -22,14 +22,13 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import io.realm.Realm;
-import io.realm.RealmChangeListener;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import tech.alvarez.numbers.BuildConfig;
 import tech.alvarez.numbers.R;
-import tech.alvarez.numbers.models.db.ChannelRealm;
+import tech.alvarez.numbers.db.AppDatabase;
+import tech.alvarez.numbers.db.entity.ChannelEntity;
 import tech.alvarez.numbers.models.youtube.ChannelsResponse;
 import tech.alvarez.numbers.models.youtube.ItemResponse;
 import tech.alvarez.numbers.utils.Constants;
@@ -40,7 +39,7 @@ import tech.alvarez.numbers.youtube.YouTubeDataApi;
 
 public class ChannelActivity extends AppCompatActivity {
 
-    private Realm realm;
+    private AppDatabase mDb;
 
     private TextView nameTextView;
     private TextView subsTextView;
@@ -56,31 +55,21 @@ public class ChannelActivity extends AppCompatActivity {
     private Timer timer;
     private Call<ChannelsResponse> call;
 
-    private ChannelRealm channelRealm;
-    private RealmChangeListener realmListener = new RealmChangeListener() {
-        @Override
-        public void onChange(Object element) {
-            Log.d(Constants.TAG, " onChange");
-
-            setDataFromRealm();
-        }
-    };
+    ChannelEntity channelEntity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_channel);
 
-        realm = Realm.getDefaultInstance();
-        realm.addChangeListener(realmListener);
+        mDb = AppDatabase.getInMemoryDatabase(getApplicationContext());
 
         Intent intent = getIntent();
         channelId = intent.getStringExtra("channel_id");
 
         timer = new Timer();
 
-
-        channelRealm = realm.where(ChannelRealm.class).equalTo("id", channelId).findFirst();
+        channelEntity = mDb.channelModel().getChannel(channelId);
 
         initViews();
         setDataFromRealm();
@@ -165,14 +154,12 @@ public class ChannelActivity extends AppCompatActivity {
     private void saveDataToRealm(ItemResponse itemResponse) {
         Log.d(Constants.TAG, " saveDataToRealm");
 
-        if (channelRealm != null) {
-            realm.beginTransaction();
-            channelRealm.setProfileUrl(itemResponse.getSnippet().getThumbnails().getDefaultThumbnail().getUrl());
-            channelRealm.setSubscribers(Integer.parseInt(itemResponse.getStatistics().getSubscriberCount()));
-            channelRealm.setDescription(itemResponse.getSnippet().getDescription());
-            channelRealm.setVideos(Long.parseLong(itemResponse.getStatistics().getVideoCount()));
-            channelRealm.setViews(Long.parseLong(itemResponse.getStatistics().getViewCount()));
-            realm.commitTransaction();
+        if (channelEntity != null) {
+            channelEntity.setProfileUrl(itemResponse.getSnippet().getThumbnails().getDefaultThumbnail().getUrl());
+            channelEntity.setSubscribers(Integer.parseInt(itemResponse.getStatistics().getSubscriberCount()));
+            channelEntity.setDescription(itemResponse.getSnippet().getDescription());
+            channelEntity.setVideos(Long.parseLong(itemResponse.getStatistics().getVideoCount()));
+            channelEntity.setViews(Long.parseLong(itemResponse.getStatistics().getViewCount()));
         }
     }
 
@@ -180,24 +167,24 @@ public class ChannelActivity extends AppCompatActivity {
     private void setDataFromRealm() {
         Log.d(Constants.TAG, " setDataFromRealm");
 
-        nameTextView.setText(channelRealm.getName());
-        viewsTextView.setText(NumberFormat.getInstance().format(channelRealm.getViews()));
-        subsTextView.setText(NumberFormat.getInstance().format(channelRealm.getSubscribers()));
-        videosTextView.setText(NumberFormat.getInstance().format(channelRealm.getVideos()));
-        descTextView.setText(channelRealm.getDescription());
-        fab.setImageResource(channelRealm.isFavorite() ? R.drawable.ic_star_white_24dp : R.drawable.ic_star_border_white_24dp);
+        nameTextView.setText(channelEntity.getName());
+        viewsTextView.setText(NumberFormat.getInstance().format(channelEntity.getViews()));
+        subsTextView.setText(NumberFormat.getInstance().format(channelEntity.getSubscribers()));
+        videosTextView.setText(NumberFormat.getInstance().format(channelEntity.getVideos()));
+        descTextView.setText(channelEntity.getDescription());
+        fab.setImageResource(channelEntity.isFavorite() ? R.drawable.ic_star_white_24dp : R.drawable.ic_star_border_white_24dp);
 
 //        Log.d(Constants.TAG, channelRealm.getBannerUrl() == null ? "null" : channelRealm.getBannerUrl());
 
         Glide.with(getApplicationContext())
-                .load(channelRealm.getBannerUrl())
+                .load(channelEntity.getBannerUrl())
                 .centerCrop()
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(bannerImageView);
 
         Glide.with(getApplicationContext())
-                .load(channelRealm.getProfileUrl())
+                .load(channelEntity.getProfileUrl())
                 .centerCrop()
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -230,10 +217,8 @@ public class ChannelActivity extends AppCompatActivity {
     }
 
     private void shareURL() {
-        ChannelRealm channelRealm = realm.where(ChannelRealm.class).equalTo("id", channelId).findFirst();
-
         Intent share = new Intent(Intent.ACTION_SEND);
-        share.putExtra(Intent.EXTRA_SUBJECT, channelRealm.getName());
+        share.putExtra(Intent.EXTRA_SUBJECT, channelEntity.getName());
         share.putExtra(Intent.EXTRA_TEXT, Util.getURLChannel(channelId));
         share.setType("text/plain");
         startActivity(Intent.createChooser(share, getString(R.string.shareChannel)));
@@ -241,13 +226,11 @@ public class ChannelActivity extends AppCompatActivity {
 
     private void removeChannel() {
         Log.d(Constants.TAG, "removeChannel");
-        realm.removeAllChangeListeners();
         call.cancel();
         timer.cancel();
-        ChannelRealm channelRealm = realm.where(ChannelRealm.class).equalTo("id", channelId).findFirst();
-        realm.beginTransaction();
-        channelRealm.deleteFromRealm();
-        realm.commitTransaction();
+
+        mDb.channelModel().deleteChannel(channelEntity);
+
         finish();
     }
 
@@ -263,16 +246,15 @@ public class ChannelActivity extends AppCompatActivity {
         Log.d(Constants.TAG, "onDestroy");
         super.onDestroy();
         call.cancel();
-        realm.close();
     }
 
 
     public void setFavorite(View view) {
         Log.d(Constants.TAG, " setFavorite");
-        boolean isFavorite = channelRealm.isFavorite();
-        realm.beginTransaction();
-        channelRealm.setFavorite(!isFavorite);
-        realm.commitTransaction();
+        boolean isFavorite = channelEntity.isFavorite();
+
+        channelEntity.setFavorite(!isFavorite);
+        mDb.channelModel().updateChannel(channelEntity);
 
         if (!isFavorite) {
             fab.setImageResource(R.drawable.ic_star_white_24dp);

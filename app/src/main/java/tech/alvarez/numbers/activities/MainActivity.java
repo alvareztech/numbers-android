@@ -18,11 +18,8 @@ import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import io.realm.Realm;
-import io.realm.RealmChangeListener;
-import io.realm.RealmResults;
-import io.realm.Sort;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -31,11 +28,11 @@ import tech.alvarez.numbers.R;
 import tech.alvarez.numbers.adapters.ChannelSubsAdapter;
 import tech.alvarez.numbers.adapters.ChannelSubsItemClickListener;
 import tech.alvarez.numbers.adapters.FavoritesAdapter;
-import tech.alvarez.numbers.models.db.ChannelRealm;
+import tech.alvarez.numbers.db.AppDatabase;
+import tech.alvarez.numbers.db.entity.ChannelEntity;
 import tech.alvarez.numbers.models.youtube.ChannelsResponse;
 import tech.alvarez.numbers.models.youtube.ItemResponse;
 import tech.alvarez.numbers.utils.Constants;
-import tech.alvarez.numbers.utils.Database;
 import tech.alvarez.numbers.utils.Messages;
 import tech.alvarez.numbers.utils.Util;
 import tech.alvarez.numbers.youtube.RetrofitClient;
@@ -43,7 +40,8 @@ import tech.alvarez.numbers.youtube.YouTubeDataApi;
 
 public class MainActivity extends AppCompatActivity implements ChannelSubsItemClickListener {
 
-    private Realm realm;
+    private AppDatabase mDb;
+
     private Call<ChannelsResponse> call;
 
     private CoordinatorLayout coordinatorLayout;
@@ -55,27 +53,18 @@ public class MainActivity extends AppCompatActivity implements ChannelSubsItemCl
     private ChannelSubsAdapter channelSubsAdapter;
     private RelativeLayout initLayout;
 
-    private RealmResults<ChannelRealm> results;
-    private RealmResults<ChannelRealm> favorites;
-
-    private RealmChangeListener realmListener = new RealmChangeListener() {
-        @Override
-        public void onChange(Object element) {
-            Log.d(Constants.TAG, " onChange");
-            setDataFromRealm();
-        }
-    };
+    private List<ChannelEntity> results;
+    private List<ChannelEntity> favorites;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        realm = Realm.getDefaultInstance();
-        realm.addChangeListener(realmListener);
+        mDb = AppDatabase.getInMemoryDatabase(getApplicationContext());
 
-        results = realm.where(ChannelRealm.class).findAll();
-        favorites = realm.where(ChannelRealm.class).equalTo("favorite", true).findAll();
+        results = mDb.channelModel().getAllChannels();
+        favorites = mDb.channelModel().getFavoriteChannels();
 
         initViews();
     }
@@ -150,7 +139,9 @@ public class MainActivity extends AppCompatActivity implements ChannelSubsItemCl
     public void getChannelsFromAPI() {
         Log.i(Constants.TAG, " getChannelsFromAPI");
 
-        String ids = Database.getIdChannelsInRealm(realm);
+        String ids = mDb.channelModel().getChannelIds().toString();
+
+        Log.i(Constants.TAG, " ids: " + ids);
 
         YouTubeDataApi service = RetrofitClient.getClient().create(YouTubeDataApi.class);
         call = service.getChannels(BuildConfig.YOUTUBE_DATA_API_KEY, ids);
@@ -184,19 +175,18 @@ public class MainActivity extends AppCompatActivity implements ChannelSubsItemCl
     private void saveDataToRealm(ArrayList<ItemResponse> items) {
         Log.d(Constants.TAG, "saveDataToRealm");
         if (items != null && items.size() > 0) {
-            realm.beginTransaction();
             for (ItemResponse itemResponse : items) {
-                ChannelRealm channelRealm = realm.where(ChannelRealm.class).equalTo("id", itemResponse.getId()).findFirst();
-                channelRealm.setName(itemResponse.getSnippet().getTitle());
-                channelRealm.setDescription(itemResponse.getSnippet().getDescription());
-                channelRealm.setProfileUrl(itemResponse.getSnippet().getThumbnails().getDefaultThumbnail().getUrl());
-                channelRealm.setSubscribers(Integer.parseInt(itemResponse.getStatistics().getSubscriberCount()));
-                channelRealm.setViews(Long.parseLong(itemResponse.getStatistics().getViewCount()));
-                channelRealm.setVideos(Long.parseLong(itemResponse.getStatistics().getVideoCount()));
-                channelRealm.setBannerUrl(itemResponse.getBrandingSettings().getImage().getBannerMobileImageUrl());
-                channelRealm.setHiddenSubscribers(itemResponse.getStatistics().isHiddenSubscriberCount());
+                ChannelEntity channelEntity = mDb.channelModel().getChannel(itemResponse.getId());
+                channelEntity.setName(itemResponse.getSnippet().getTitle());
+                channelEntity.setDescription(itemResponse.getSnippet().getDescription());
+                channelEntity.setProfileUrl(itemResponse.getSnippet().getThumbnails().getDefaultThumbnail().getUrl());
+                channelEntity.setSubscribers(Integer.parseInt(itemResponse.getStatistics().getSubscriberCount()));
+                channelEntity.setViews(Long.parseLong(itemResponse.getStatistics().getViewCount()));
+                channelEntity.setVideos(Long.parseLong(itemResponse.getStatistics().getVideoCount()));
+                channelEntity.setBannerUrl(itemResponse.getBrandingSettings().getImage().getBannerMobileImageUrl());
+                channelEntity.setHiddenSubscribers(itemResponse.getStatistics().isHiddenSubscriberCount());
+                mDb.channelModel().updateChannel(channelEntity);
             }
-            realm.commitTransaction();
         }
     }
 
@@ -264,14 +254,13 @@ public class MainActivity extends AppCompatActivity implements ChannelSubsItemCl
         super.onDestroy();
         Log.d(Constants.TAG, "onDestroy");
         call.cancel();
-        realm.close();
     }
 
     @Override
-    public void onChannelItemClick(ChannelRealm channelRealm) {
+    public void onChannelItemClick(ChannelEntity channelEntity) {
         try {
             Intent intent = new Intent(this, ChannelActivity.class);
-            intent.putExtra("channel_id", channelRealm.getId());
+            intent.putExtra("channel_id", channelEntity.getId());
             startActivity(intent);
         } catch (Exception ex) {
             Log.e(Constants.TAG, " onChannelItemClick: " + ex.getMessage());
@@ -285,9 +274,9 @@ public class MainActivity extends AppCompatActivity implements ChannelSubsItemCl
             swipeRefreshLayout.setVisibility(View.VISIBLE);
             initLayout.setVisibility(View.GONE);
             if (Util.getOrderPreference(this) == Constants.ASCENDING_ORDER) {
-                results = results.sort("subscribers", Sort.ASCENDING);
+                results = mDb.channelModel().getChannelsAsc();
             } else {
-                results = results.sort("subscribers", Sort.DESCENDING);
+                results = mDb.channelModel().getChannelsDesc();
             }
             channelSubsAdapter.setDataset(results.subList(0, results.size()));
         } else {
@@ -298,9 +287,9 @@ public class MainActivity extends AppCompatActivity implements ChannelSubsItemCl
         if (favorites.size() > 0) {
             favoriteRecyclerView.setVisibility(View.VISIBLE);
             if (Util.getOrderPreference(this) == Constants.ASCENDING_ORDER) {
-                favorites = favorites.sort("subscribers", Sort.ASCENDING);
+                favorites = mDb.channelModel().getFavoriteChannelsAsc();
             } else {
-                favorites = favorites.sort("subscribers", Sort.DESCENDING);
+                favorites = mDb.channelModel().getFavoriteChannelsDesc();
             }
             favoritesAdapter.setDataset(favorites.subList(0, favorites.size()));
         } else {

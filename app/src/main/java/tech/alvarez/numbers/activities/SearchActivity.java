@@ -18,8 +18,6 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import org.reactivestreams.Subscriber;
-
 import java.util.ArrayList;
 
 import io.reactivex.Observable;
@@ -27,22 +25,21 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import io.realm.Realm;
 import tech.alvarez.numbers.BuildConfig;
 import tech.alvarez.numbers.R;
 import tech.alvarez.numbers.adapters.OnItemClickListener;
 import tech.alvarez.numbers.adapters.SearchChannelsAdapter;
-import tech.alvarez.numbers.models.db.ChannelRealm;
+import tech.alvarez.numbers.db.AppDatabase;
+import tech.alvarez.numbers.db.entity.ChannelEntity;
 import tech.alvarez.numbers.models.youtube.search.ItemSearchResponse;
 import tech.alvarez.numbers.models.youtube.search.SearchResponse;
 import tech.alvarez.numbers.utils.Constants;
-import tech.alvarez.numbers.utils.Database;
 import tech.alvarez.numbers.youtube.RetrofitClient;
 import tech.alvarez.numbers.youtube.YouTubeDataApi;
 
 public class SearchActivity extends AppCompatActivity implements OnItemClickListener {
 
-    private Realm realm;
+    private AppDatabase mDb;
 
     private RecyclerView resultsRecyclerView;
     private SearchChannelsAdapter channelsAdapter;
@@ -62,7 +59,7 @@ public class SearchActivity extends AppCompatActivity implements OnItemClickList
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        realm = Realm.getDefaultInstance();
+        mDb = AppDatabase.getInMemoryDatabase(getApplicationContext());
 
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
 
@@ -199,37 +196,21 @@ public class SearchActivity extends AppCompatActivity implements OnItemClickList
     @Override
     public void onItemClick(final ItemSearchResponse itemSearchResponse) {
 
-        if (Database.countChannels(realm) < Constants.LIMIT_YOUTUBE_CHANNELS) {
+        int count = mDb.channelModel().getCountChannels();
 
-            realm.executeTransactionAsync(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    ChannelRealm channel = realm.createObject(ChannelRealm.class);
-                    channel.setId(itemSearchResponse.getSnippet().getChannelId());
-                    channel.setName(itemSearchResponse.getSnippet().getTitle());
-                    channel.setDescription(itemSearchResponse.getSnippet().getDescription());
-                    channel.setProfileUrl(itemSearchResponse.getSnippet().getThumbnails().getDefaultThumbnail().getUrl());
-                }
-            }, new Realm.Transaction.OnSuccess() {
-                @Override
-                public void onSuccess() {
-                    Snackbar.make(resultsRecyclerView, R.string.added_channel, Snackbar.LENGTH_SHORT).show();
-                    channelsAdapter.notifyDataSetChanged();
-                }
-            }, new Realm.Transaction.OnError() {
-                @Override
-                public void onError(Throwable error) {
-                    Snackbar.make(resultsRecyclerView, error.getLocalizedMessage(), Snackbar.LENGTH_SHORT).show();
-                }
-            });
+        if (count < Constants.LIMIT_YOUTUBE_CHANNELS) {
+
+            ChannelEntity channel = new ChannelEntity();
+            channel.setId(itemSearchResponse.getSnippet().getChannelId());
+            channel.setName(itemSearchResponse.getSnippet().getTitle());
+            channel.setDescription(itemSearchResponse.getSnippet().getDescription());
+            channel.setProfileUrl(itemSearchResponse.getSnippet().getThumbnails().getDefaultThumbnail().getUrl());
+
+            mDb.channelModel().insertChannel(channel);
+            channelsAdapter.notifyDataSetChanged();
+
         } else {
             Snackbar.make(resultsRecyclerView, R.string.no_add_more_channels, Snackbar.LENGTH_SHORT).show();
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        realm.close();
     }
 }

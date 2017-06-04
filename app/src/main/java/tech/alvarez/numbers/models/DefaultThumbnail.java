@@ -2,7 +2,6 @@ package tech.alvarez.numbers.models;
 
 import com.google.gson.annotations.SerializedName;
 
-import io.realm.RealmObject;
 
 /**
  * Created by Daniel Alvarez on 8/7/16.

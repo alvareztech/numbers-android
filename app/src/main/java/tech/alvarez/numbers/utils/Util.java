@@ -4,9 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import io.realm.RealmResults;
-import tech.alvarez.numbers.models.db.ChannelRealm;
-
 /**
  * Created by Daniel Alvarez on 24/7/16.
  * Copyright © 2016 Alvarez.tech. All rights reserved.

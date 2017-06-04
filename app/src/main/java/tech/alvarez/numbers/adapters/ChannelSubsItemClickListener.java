@@ -1,6 +1,6 @@
 package tech.alvarez.numbers.adapters;
 
-import tech.alvarez.numbers.models.db.ChannelRealm;
+import tech.alvarez.numbers.db.entity.ChannelEntity;
 
 /**
  * Created by Daniel Alvarez on 24/7/16.
@@ -8,5 +8,5 @@ import tech.alvarez.numbers.models.db.ChannelRealm;
  */
 public interface ChannelSubsItemClickListener {
 
-    void onChannelItemClick(ChannelRealm channelRealm);
+    void onChannelItemClick(ChannelEntity channelEntity);
 }

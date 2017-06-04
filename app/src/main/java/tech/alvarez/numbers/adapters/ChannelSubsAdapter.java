@@ -17,9 +17,8 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.RealmResults;
 import tech.alvarez.numbers.R;
-import tech.alvarez.numbers.models.db.ChannelRealm;
+import tech.alvarez.numbers.db.entity.ChannelEntity;
 import tech.alvarez.numbers.utils.Util;
 
 /**
@@ -29,7 +28,7 @@ import tech.alvarez.numbers.utils.Util;
 public class ChannelSubsAdapter extends RecyclerView.Adapter<ChannelSubsAdapter.ViewHolder> {
 
     private Context context;
-    private List<ChannelRealm> dataset;
+    private List<ChannelEntity> dataset;
     private ChannelSubsItemClickListener channelSubsItemClickListener;
 
     public ChannelSubsAdapter(Context context, ChannelSubsItemClickListener channelSubsItemClickListener) {
@@ -46,13 +45,13 @@ public class ChannelSubsAdapter extends RecyclerView.Adapter<ChannelSubsAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        ChannelRealm channelRealm = dataset.get(position);
+        ChannelEntity channelRealm = dataset.get(position);
         holder.nameTextView.setText(channelRealm.getName());
         holder.subsTextView.setText(NumberFormat.getInstance().format(channelRealm.getSubscribers()));
         holder.subtitleTextView.setText(NumberFormat.getInstance().format(channelRealm.getVideos()) + " videos");
 
         if (position > 0) {
-            ChannelRealm previousChannelRealm = dataset.get(position - 1);
+            ChannelEntity previousChannelRealm = dataset.get(position - 1);
 
             int difference = previousChannelRealm.getSubscribers() - channelRealm.getSubscribers();
 
@@ -107,7 +106,7 @@ public class ChannelSubsAdapter extends RecyclerView.Adapter<ChannelSubsAdapter.
             differenceTextView = (TextView) itemView.findViewById(R.id.differenceTextView);
         }
 
-        public void setOnItemClick(final ChannelRealm channelRealm, final ChannelSubsItemClickListener channelSubsItemClickListener) {
+        public void setOnItemClick(final ChannelEntity channelRealm, final ChannelSubsItemClickListener channelSubsItemClickListener) {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -117,11 +116,11 @@ public class ChannelSubsAdapter extends RecyclerView.Adapter<ChannelSubsAdapter.
         }
     }
 
-    public List<ChannelRealm> getDataset() {
+    public List<ChannelEntity> getDataset() {
         return dataset;
     }
 
-    public void setDataset(List<ChannelRealm> dataset) {
+    public void setDataset(List<ChannelEntity> dataset) {
         this.dataset = dataset;
         notifyDataSetChanged();
     }
