@@ -1,12 +1,12 @@
-package tech.alvarez.numbers.models.youtube;
+package tech.alvarez.numbers.model;
 
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by Daniel Alvarez on 24/7/16.
+ * Created by Daniel Alvarez on 8/7/16.
  * Copyright © 2016 Alvarez.tech. All rights reserved.
  */
-public class StatisticsResponse {
+public class Statistics {
 
     @SerializedName("viewCount")
     private String viewCount;
@@ -14,8 +14,6 @@ public class StatisticsResponse {
     private String subscriberCount;
     @SerializedName("videoCount")
     private String videoCount;
-    @SerializedName("hiddenSubscriberCount")
-    private boolean hiddenSubscriberCount;
 
     public String getViewCount() {
         return viewCount;
@@ -39,13 +37,5 @@ public class StatisticsResponse {
 
     public void setVideoCount(String videoCount) {
         this.videoCount = videoCount;
-    }
-
-    public boolean isHiddenSubscriberCount() {
-        return hiddenSubscriberCount;
-    }
-
-    public void setHiddenSubscriberCount(boolean hiddenSubscriberCount) {
-        this.hiddenSubscriberCount = hiddenSubscriberCount;
     }
 }

@@ -1,4 +1,4 @@
-package tech.alvarez.numbers.models.youtube.search;
+package tech.alvarez.numbers.model.youtube.search;
 
 import com.google.gson.annotations.SerializedName;
 

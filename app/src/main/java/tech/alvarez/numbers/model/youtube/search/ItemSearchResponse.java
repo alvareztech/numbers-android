@@ -1,8 +1,6 @@
-package tech.alvarez.numbers.models.youtube.search;
+package tech.alvarez.numbers.model.youtube.search;
 
 import com.google.gson.annotations.SerializedName;
-
-import tech.alvarez.numbers.models.youtube.Snippet;
 
 /**
  * Created by Daniel Alvarez on 4/8/16.

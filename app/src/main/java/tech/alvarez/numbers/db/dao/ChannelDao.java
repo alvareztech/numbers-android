@@ -1,5 +1,6 @@
 package tech.alvarez.numbers.db.dao;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -18,8 +19,14 @@ public interface ChannelDao {
     @Query("SELECT * FROM channels")
     List<ChannelEntity> getAllChannels();
 
+    @Query("SELECT * FROM channels")
+    LiveData<List<ChannelEntity>> findAllChannels();
+
     @Query("SELECT * FROM channels WHERE favorite=1")
     List<ChannelEntity> getFavoriteChannels();
+
+    @Query("SELECT * FROM channels WHERE favorite=1")
+    LiveData<List<ChannelEntity>> findFavoriteChannels();
 
     @Query("SELECT * FROM channels WHERE id=:id")
     ChannelEntity getChannel(String id);
@@ -49,7 +56,10 @@ public interface ChannelDao {
     void insertChannel(ChannelEntity channel);
 
     @Update
-    void updateChannel(ChannelEntity channel);
+    void updateChannel(ChannelEntity... channel);
+
+    @Update
+    void updateChannel(List<ChannelEntity> channels);
 
     @Delete
     void deleteChannel(ChannelEntity channel);

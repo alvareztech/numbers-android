@@ -1,6 +1,6 @@
 package tech.alvarez.numbers.adapters;
 
-import tech.alvarez.numbers.models.youtube.search.ItemSearchResponse;
+import tech.alvarez.numbers.model.youtube.search.ItemSearchResponse;
 
 /**
  * Created by Daniel Alvarez on 8/7/16.

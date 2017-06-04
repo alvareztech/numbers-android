@@ -29,8 +29,8 @@ import tech.alvarez.numbers.BuildConfig;
 import tech.alvarez.numbers.R;
 import tech.alvarez.numbers.db.AppDatabase;
 import tech.alvarez.numbers.db.entity.ChannelEntity;
-import tech.alvarez.numbers.models.youtube.ChannelsResponse;
-import tech.alvarez.numbers.models.youtube.ItemResponse;
+import tech.alvarez.numbers.model.youtube.ChannelsResponse;
+import tech.alvarez.numbers.model.youtube.ItemResponse;
 import tech.alvarez.numbers.utils.Constants;
 import tech.alvarez.numbers.utils.Messages;
 import tech.alvarez.numbers.utils.Util;
@@ -62,7 +62,7 @@ public class ChannelActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_channel);
 
-        mDb = AppDatabase.getInMemoryDatabase(getApplicationContext());
+        mDb = AppDatabase.getDatabase(getApplicationContext());
 
         Intent intent = getIntent();
         channelId = intent.getStringExtra("channel_id");

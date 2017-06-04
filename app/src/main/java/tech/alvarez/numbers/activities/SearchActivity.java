@@ -31,8 +31,8 @@ import tech.alvarez.numbers.adapters.OnItemClickListener;
 import tech.alvarez.numbers.adapters.SearchChannelsAdapter;
 import tech.alvarez.numbers.db.AppDatabase;
 import tech.alvarez.numbers.db.entity.ChannelEntity;
-import tech.alvarez.numbers.models.youtube.search.ItemSearchResponse;
-import tech.alvarez.numbers.models.youtube.search.SearchResponse;
+import tech.alvarez.numbers.model.youtube.search.ItemSearchResponse;
+import tech.alvarez.numbers.model.youtube.search.SearchResponse;
 import tech.alvarez.numbers.utils.Constants;
 import tech.alvarez.numbers.youtube.RetrofitClient;
 import tech.alvarez.numbers.youtube.YouTubeDataApi;
@@ -59,7 +59,7 @@ public class SearchActivity extends AppCompatActivity implements OnItemClickList
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mDb = AppDatabase.getInMemoryDatabase(getApplicationContext());
+        mDb = AppDatabase.getDatabase(getApplicationContext());
 
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
 

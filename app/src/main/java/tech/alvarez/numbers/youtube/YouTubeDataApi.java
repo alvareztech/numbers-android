@@ -5,9 +5,9 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
-import tech.alvarez.numbers.models.VideoResponse;
-import tech.alvarez.numbers.models.youtube.ChannelsResponse;
-import tech.alvarez.numbers.models.youtube.search.SearchResponse;
+import tech.alvarez.numbers.model.VideoResponse;
+import tech.alvarez.numbers.model.youtube.ChannelsResponse;
+import tech.alvarez.numbers.model.youtube.search.SearchResponse;
 
 /**
  * Created by Daniel Alvarez on 7/7/16.
