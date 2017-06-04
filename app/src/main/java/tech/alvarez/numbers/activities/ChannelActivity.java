@@ -172,7 +172,7 @@ public class ChannelActivity extends AppCompatActivity {
         subsTextView.setText(NumberFormat.getInstance().format(channelEntity.getSubscribers()));
         videosTextView.setText(NumberFormat.getInstance().format(channelEntity.getVideos()));
         descTextView.setText(channelEntity.getDescription());
-        fab.setImageResource(channelEntity.isFavorite() ? R.drawable.ic_star_white_24dp : R.drawable.ic_star_border_white_24dp);
+        fab.setImageResource(channelEntity.isFavorite() ? R.drawable.ic_star : R.drawable.ic_star_border);
 
 //        Log.d(Constants.TAG, channelRealm.getBannerUrl() == null ? "null" : channelRealm.getBannerUrl());
 
@@ -257,9 +257,9 @@ public class ChannelActivity extends AppCompatActivity {
         mDb.channelModel().updateChannel(channelEntity);
 
         if (!isFavorite) {
-            fab.setImageResource(R.drawable.ic_star_white_24dp);
+            fab.setImageResource(R.drawable.ic_star);
         } else {
-            fab.setImageResource(R.drawable.ic_star_border_white_24dp);
+            fab.setImageResource(R.drawable.ic_star_border);
         }
     }
 }

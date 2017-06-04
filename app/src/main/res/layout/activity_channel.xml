@@ -217,7 +217,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:onClick="setFavorite"
-        android:src="@drawable/ic_star_border_white_24dp"
+        android:src="@drawable/ic_star_border"
         app:layout_anchor="@id/bannerImageView"
         app:layout_anchorGravity="bottom|end" />
 
