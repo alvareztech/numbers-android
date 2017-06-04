@@ -1,5 +1,6 @@
 package tech.alvarez.numbers.youtube;
 
+import io.reactivex.Observable;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -22,6 +23,9 @@ public interface YouTubeDataApi {
 
     @GET("search?maxResults=50")
     Call<SearchResponse> search(@Query("q") String query, @Query("key") String apiKey, @Query("part") String part, @Query("type") String type);
+
+    @GET("search?maxResults=50")
+    Observable<SearchResponse> search2(@Query("q") String query, @Query("key") String apiKey, @Query("part") String part, @Query("type") String type);
 
     @GET("channels")
     Call<VideoResponse> getChannels(@Query("key") String apiKey, @Query("part") String part, @Query("id") String ide, @Query("fields") String fields);

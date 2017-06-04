@@ -17,14 +17,17 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import org.reactivestreams.Subscriber;
 
 import java.util.ArrayList;
 
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import tech.alvarez.numbers.BuildConfig;
 import tech.alvarez.numbers.R;
 import tech.alvarez.numbers.adapters.OnItemClickListener;
@@ -34,7 +37,6 @@ import tech.alvarez.numbers.models.youtube.search.ItemSearchResponse;
 import tech.alvarez.numbers.models.youtube.search.SearchResponse;
 import tech.alvarez.numbers.utils.Constants;
 import tech.alvarez.numbers.utils.Database;
-import tech.alvarez.numbers.utils.Messages;
 import tech.alvarez.numbers.youtube.RetrofitClient;
 import tech.alvarez.numbers.youtube.YouTubeDataApi;
 
@@ -116,11 +118,50 @@ public class SearchActivity extends AppCompatActivity implements OnItemClickList
 //    }
 
     public void search(final String query) {
+        Log.d(Constants.TAG, "search.");
+
         YouTubeDataApi service = RetrofitClient.getClient().create(YouTubeDataApi.class);
-        Call<SearchResponse> call = service.search(query, BuildConfig.YOUTUBE_DATA_API_KEY, "snippet", "channel");
-        Log.d(Constants.TAG, call.request().url().toString());
+
+//        Call<SearchResponse> call = service.search(query, BuildConfig.YOUTUBE_DATA_API_KEY, "snippet", "channel");
+        Observable<SearchResponse> call = service.search2(query, BuildConfig.YOUTUBE_DATA_API_KEY, "snippet", "channel");
 
         progressBar.setVisibility(View.VISIBLE);
+
+        call.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnComplete(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        Log.d(Constants.TAG, "doOnComplete!!!!!");
+                    }
+                })
+                .doOnNext(new Consumer<SearchResponse>() {
+                    @Override
+                    public void accept(SearchResponse searchResponse) throws Exception {
+                        Log.d(Constants.TAG, "doOnNext");
+                    }
+                })
+                .doOnError(new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Log.d(Constants.TAG, "doOnError");
+                    }
+                })
+                .subscribe(new Consumer<SearchResponse>() {
+                    @Override
+                    public void accept(SearchResponse searchResponse) throws Exception {
+                        Log.d(Constants.TAG, "  onResponse.isSuccessful !!!RX " + searchResponse.toString());
+
+                        progressBar.setVisibility(View.GONE);
+
+                        setData(searchResponse.getItems());
+                    }
+                });
+
+//        Log.d(Constants.TAG, call.request().url().toString());
+
+
+        /*
         call.enqueue(new Callback<SearchResponse>() {
             @Override
             public void onResponse(Call<SearchResponse> call, Response<SearchResponse> response) {
@@ -144,6 +185,7 @@ public class SearchActivity extends AppCompatActivity implements OnItemClickList
                 Messages.showNetwotkError(coordinatorLayout, SearchActivity.this, query);
             }
         });
+        */
 
     }
 
