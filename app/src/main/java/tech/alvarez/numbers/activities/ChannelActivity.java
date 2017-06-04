@@ -113,7 +113,7 @@ public class ChannelActivity extends AppCompatActivity {
             }
         };
         timer = new Timer();
-        timer.schedule(timerTask, 0, 3000);
+        timer.schedule(timerTask, 0, Constants.FREQUENCY_UPDATE);
     }
 
     public void getChannelFromAPI() {

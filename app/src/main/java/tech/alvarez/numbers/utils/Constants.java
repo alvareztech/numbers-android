@@ -36,6 +36,7 @@ public class Constants {
 
     public static final int LIMIT_YOUTUBE_CHANNELS = 49;
 
+    public static final int FREQUENCY_UPDATE = 3000;
 }
 
 
