@@ -46,8 +46,8 @@
                     android:id="@+id/profileCardView"
                     android:layout_width="72dp"
                     android:layout_height="72dp"
-                    android:layout_marginTop="80dp"
-                    android:layout_centerHorizontal="true">
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="80dp">
 
                     <ImageButton
 
@@ -64,11 +64,11 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/profileCardView"
                     android:layout_centerHorizontal="true"
-                    android:padding="8dp"
                     android:gravity="center_horizontal"
-                    android:text="@string/app_name"
+                    android:padding="8dp"
                     android:textColor="@color/colorPrimaryText"
-                    android:textSize="24sp" />
+                    android:textSize="24sp"
+                    tools:text="ALVAREZ.tech" />
 
             </RelativeLayout>
 
@@ -112,9 +112,9 @@
                             android:layout_weight="1"
                             android:fontFamily="sans-serif-light"
                             android:gravity="end|center_vertical"
-                            android:text="@string/app_name"
                             android:textColor="@color/colorPrimaryText"
-                            android:textSize="34sp" />
+                            android:textSize="34sp"
+                            tools:text="123,345" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -139,9 +139,9 @@
                             android:layout_weight="1"
                             android:fontFamily="sans-serif-light"
                             android:gravity="end|center_vertical"
-                            android:text="@string/app_name"
                             android:textColor="@color/colorPrimaryText"
-                            android:textSize="34sp" />
+                            android:textSize="34sp"
+                            tools:text="5,423" />
 
                     </LinearLayout>
 
@@ -167,9 +167,9 @@
                             android:layout_weight="1"
                             android:fontFamily="sans-serif-light"
                             android:gravity="end|center_vertical"
-                            android:text="@string/app_name"
                             android:textColor="@color/colorPrimaryText"
-                            android:textSize="34sp" />
+                            android:textSize="34sp"
+                            tools:text="52" />
 
 
                     </LinearLayout>
@@ -198,9 +198,9 @@
                         android:layout_margin="16dp"
                         android:autoLink="all"
                         android:fontFamily="sans-serif-light"
-                        android:text="@string/app_name"
                         android:textColor="@color/colorSecondaryText"
-                        android:textSize="16sp" />
+                        android:textSize="16sp"
+                        tools:text="Esta es un descripción de un canal que puede contener varias líneas y contenido como links." />
 
                 </LinearLayout>
 

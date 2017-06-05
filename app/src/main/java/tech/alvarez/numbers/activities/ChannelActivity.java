@@ -56,7 +56,7 @@ public class ChannelActivity extends AppCompatActivity implements LifecycleRegis
 
     private Timer timer;
 
-    ChannelEntity channelEntity;
+    private ChannelEntity channelEntity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
