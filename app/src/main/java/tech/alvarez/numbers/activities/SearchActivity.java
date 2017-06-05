@@ -35,7 +35,7 @@ import tech.alvarez.numbers.model.youtube.search.ItemSearchResponse;
 import tech.alvarez.numbers.model.youtube.search.SearchResponse;
 import tech.alvarez.numbers.utils.Constants;
 import tech.alvarez.numbers.youtube.RetrofitClient;
-import tech.alvarez.numbers.youtube.YouTubeDataApi;
+import tech.alvarez.numbers.youtube.YouTubeDataApiService;
 
 public class SearchActivity extends AppCompatActivity implements OnItemClickListener {
 
@@ -117,7 +117,7 @@ public class SearchActivity extends AppCompatActivity implements OnItemClickList
     public void search(final String query) {
         Log.d(Constants.TAG, "search.");
 
-        YouTubeDataApi service = RetrofitClient.getClient().create(YouTubeDataApi.class);
+        YouTubeDataApiService service = RetrofitClient.getClient().create(YouTubeDataApiService.class);
 
 //        Call<SearchResponse> call = service.search(query, BuildConfig.YOUTUBE_DATA_API_KEY, "snippet", "channel");
         Observable<SearchResponse> call = service.search2(query, BuildConfig.YOUTUBE_DATA_API_KEY, "snippet", "channel");

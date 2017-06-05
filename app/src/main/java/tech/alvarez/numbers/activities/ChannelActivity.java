@@ -38,7 +38,7 @@ import tech.alvarez.numbers.utils.Messages;
 import tech.alvarez.numbers.utils.Util;
 import tech.alvarez.numbers.viewmodel.ChannelViewModel;
 import tech.alvarez.numbers.youtube.RetrofitClient;
-import tech.alvarez.numbers.youtube.YouTubeDataApi;
+import tech.alvarez.numbers.youtube.YouTubeDataApiService;
 
 public class ChannelActivity extends LifecycleActivity {
 
@@ -130,7 +130,7 @@ public class ChannelActivity extends LifecycleActivity {
     public void getChannelFromAPI() {
         Log.i(Constants.TAG, " getChannelFromAPI");
 
-        YouTubeDataApi service = RetrofitClient.getClient().create(YouTubeDataApi.class);
+        YouTubeDataApiService service = RetrofitClient.getClient().create(YouTubeDataApiService.class);
         call = service.getChannelsWithDetails(BuildConfig.YOUTUBE_DATA_API_KEY, channelId);
 
         Log.d(Constants.TAG, "  URL: " + call.request().url());

@@ -39,7 +39,7 @@ import tech.alvarez.numbers.utils.Messages;
 import tech.alvarez.numbers.utils.Util;
 import tech.alvarez.numbers.viewmodel.ChannelsViewModel;
 import tech.alvarez.numbers.youtube.RetrofitClient;
-import tech.alvarez.numbers.youtube.YouTubeDataApi;
+import tech.alvarez.numbers.youtube.YouTubeDataApiService;
 
 public class MainActivity extends LifecycleActivity implements ChannelSubsItemClickListener {
 
@@ -196,7 +196,7 @@ public class MainActivity extends LifecycleActivity implements ChannelSubsItemCl
 
         Log.i(Constants.TAG, "  ids: " + ids);
 
-        YouTubeDataApi service = RetrofitClient.getClient().create(YouTubeDataApi.class);
+        YouTubeDataApiService service = RetrofitClient.getClient().create(YouTubeDataApiService.class);
         call = service.getChannels(BuildConfig.YOUTUBE_DATA_API_KEY, ids);
 
         Log.i(Constants.TAG, "  URL: " + call.request().url());

@@ -13,7 +13,7 @@ import tech.alvarez.numbers.model.youtube.search.SearchResponse;
  * Created by Daniel Alvarez on 7/7/16.
  * Copyright © 2016 Alvarez.tech. All rights reserved.
  */
-public interface YouTubeDataApi {
+public interface YouTubeDataApiService {
 
     @GET("videos")
     Call<VideoResponse> getVideos(@Query("id") String ide, @Query("key") String key, @Query("part") String part);
