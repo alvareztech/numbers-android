@@ -1,6 +1,5 @@
 package tech.alvarez.numbers.activities;
 
-import android.arch.lifecycle.LifecycleActivity;
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.LifecycleRegistryOwner;
 import android.arch.lifecycle.Observer;
@@ -28,10 +27,8 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import tech.alvarez.numbers.BuildConfig;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
 import tech.alvarez.numbers.R;
 import tech.alvarez.numbers.db.entity.ChannelEntity;
 import tech.alvarez.numbers.model.youtube.ChannelsResponse;
@@ -40,8 +37,6 @@ import tech.alvarez.numbers.utils.Constants;
 import tech.alvarez.numbers.utils.Messages;
 import tech.alvarez.numbers.utils.Util;
 import tech.alvarez.numbers.viewmodel.ChannelViewModel;
-import tech.alvarez.numbers.youtube.RetrofitClient;
-import tech.alvarez.numbers.youtube.YouTubeDataApiService;
 
 public class ChannelActivity extends AppCompatActivity implements LifecycleRegistryOwner {
 
@@ -60,7 +55,6 @@ public class ChannelActivity extends AppCompatActivity implements LifecycleRegis
     private String channelId;
 
     private Timer timer;
-    private Call<ChannelsResponse> call;
 
     ChannelEntity channelEntity;
 
@@ -134,32 +128,17 @@ public class ChannelActivity extends AppCompatActivity implements LifecycleRegis
     public void getChannelFromAPI() {
         Log.i(Constants.TAG, " getChannelFromAPI");
 
-        YouTubeDataApiService service = RetrofitClient.getClient().create(YouTubeDataApiService.class);
-        call = service.getChannelsWithDetails(BuildConfig.YOUTUBE_DATA_API_KEY, channelId);
-
-        Log.d(Constants.TAG, "  URL: " + call.request().url());
-
-        call.enqueue(new Callback<ChannelsResponse>() {
+        mViewModel.getChannelObservable(channelId).subscribe(new Consumer<ChannelsResponse>() {
             @Override
-            public void onResponse(Call<ChannelsResponse> call, Response<ChannelsResponse> response) {
-                Log.d(Constants.TAG, "  onResponse");
-
-                if (response.isSuccessful()) {
-                    ArrayList<ItemResponse> itemResponses = response.body().getItems();
-                    if (itemResponses != null && itemResponses.size() > 0) {
-                        saveDatabase(itemResponses.get(0));
-                    }
-                } else {
-                    Log.e(Constants.TAG, " Error: " + response.errorBody());
-
-                    Messages.showNetwotkError(fab, ChannelActivity.this);
+            public void accept(@NonNull ChannelsResponse channelsResponse) throws Exception {
+                ArrayList<ItemResponse> itemResponses = channelsResponse.getItems();
+                if (itemResponses != null && itemResponses.size() > 0) {
+                    saveDatabase(itemResponses.get(0));
                 }
             }
-
+        }, new Consumer<Throwable>() {
             @Override
-            public void onFailure(Call<ChannelsResponse> call, Throwable t) {
-                Log.e(Constants.TAG, "  onFailure: " + t.getMessage());
-
+            public void accept(@NonNull Throwable throwable) throws Exception {
                 Messages.showNetwotkError(fab, ChannelActivity.this);
             }
         });
@@ -241,7 +220,6 @@ public class ChannelActivity extends AppCompatActivity implements LifecycleRegis
 
     private void removeChannel() {
         Log.d(Constants.TAG, "removeChannel");
-        call.cancel();
         timer.cancel();
 
         mViewModel.delete(channelEntity);
@@ -255,14 +233,6 @@ public class ChannelActivity extends AppCompatActivity implements LifecycleRegis
         super.onStop();
         timer.cancel();
     }
-
-    @Override
-    protected void onDestroy() {
-        Log.d(Constants.TAG, "onDestroy");
-        super.onDestroy();
-        call.cancel();
-    }
-
 
     public void setFavorite(View view) {
         Log.d(Constants.TAG, " setFavorite");

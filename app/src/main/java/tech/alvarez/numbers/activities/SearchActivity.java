@@ -1,5 +1,8 @@
 package tech.alvarez.numbers.activities;
 
+import android.arch.lifecycle.LifecycleRegistry;
+import android.arch.lifecycle.LifecycleRegistryOwner;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -20,26 +23,22 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Action;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
-import tech.alvarez.numbers.BuildConfig;
 import tech.alvarez.numbers.R;
 import tech.alvarez.numbers.adapters.OnItemClickListener;
 import tech.alvarez.numbers.adapters.SearchChannelsAdapter;
-import tech.alvarez.numbers.db.AppDatabase;
 import tech.alvarez.numbers.db.entity.ChannelEntity;
 import tech.alvarez.numbers.model.youtube.search.ItemSearchResponse;
 import tech.alvarez.numbers.model.youtube.search.SearchResponse;
 import tech.alvarez.numbers.utils.Constants;
-import tech.alvarez.numbers.youtube.RetrofitClient;
-import tech.alvarez.numbers.youtube.YouTubeDataApiService;
+import tech.alvarez.numbers.utils.Messages;
+import tech.alvarez.numbers.viewmodel.SearchViewModel;
 
-public class SearchActivity extends AppCompatActivity implements OnItemClickListener {
+public class SearchActivity extends AppCompatActivity implements OnItemClickListener, LifecycleRegistryOwner {
 
-    private AppDatabase mDb;
+    private SearchViewModel mViewModel;
+    private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
 
     private RecyclerView resultsRecyclerView;
     private SearchChannelsAdapter channelsAdapter;
@@ -53,13 +52,13 @@ public class SearchActivity extends AppCompatActivity implements OnItemClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+        mViewModel = ViewModelProviders.of(this).get(SearchViewModel.class);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 //        getSupportActionBar().setTitle("");
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        mDb = AppDatabase.getDatabase(getApplicationContext());
 
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
 
@@ -107,83 +106,26 @@ public class SearchActivity extends AppCompatActivity implements OnItemClickList
         }
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.menu_search, menu);
-//        return true;
-//    }
-
     public void search(final String query) {
-        Log.d(Constants.TAG, "search.");
-
-        YouTubeDataApiService service = RetrofitClient.getClient().create(YouTubeDataApiService.class);
-
-//        Call<SearchResponse> call = service.search(query, BuildConfig.YOUTUBE_DATA_API_KEY, "snippet", "channel");
-        Observable<SearchResponse> call = service.search2(query, BuildConfig.YOUTUBE_DATA_API_KEY, "snippet", "channel");
+        Log.d(Constants.TAG, "search: " + query);
 
         progressBar.setVisibility(View.VISIBLE);
 
-        call.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnComplete(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        Log.d(Constants.TAG, "doOnComplete!!!!!");
-                    }
-                })
-                .doOnNext(new Consumer<SearchResponse>() {
-                    @Override
-                    public void accept(SearchResponse searchResponse) throws Exception {
-                        Log.d(Constants.TAG, "doOnNext");
-                    }
-                })
-                .doOnError(new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        Log.d(Constants.TAG, "doOnError");
-                    }
-                })
-                .subscribe(new Consumer<SearchResponse>() {
-                    @Override
-                    public void accept(SearchResponse searchResponse) throws Exception {
-                        Log.d(Constants.TAG, "  onResponse.isSuccessful !!!RX " + searchResponse.toString());
-
-                        progressBar.setVisibility(View.GONE);
-
-                        setData(searchResponse.getItems());
-                    }
-                });
-
-//        Log.d(Constants.TAG, call.request().url().toString());
-
-
-        /*
-        call.enqueue(new Callback<SearchResponse>() {
+        mViewModel.getSearchObservable(query).subscribe(new Consumer<SearchResponse>() {
             @Override
-            public void onResponse(Call<SearchResponse> call, Response<SearchResponse> response) {
-                Log.d(Constants.TAG, " onResponse");
+            public void accept(SearchResponse searchResponse) throws Exception {
+                Log.d(Constants.TAG, "  onResponse: " + searchResponse.toString());
                 progressBar.setVisibility(View.GONE);
-
-                if (response.isSuccessful()) {
-                    Log.d(Constants.TAG, "  onResponse.isSuccessful " + response.raw());
-                    setData(response.body().getItems());
-                } else {
-                    Log.e(Constants.TAG, " " + response.errorBody());
-                    Messages.showNetwotkError(coordinatorLayout, SearchActivity.this, query);
-                }
+                setData(searchResponse.getItems());
             }
-
+        }, new Consumer<Throwable>() {
             @Override
-            public void onFailure(Call<SearchResponse> call, Throwable t) {
-                t.printStackTrace();
+            public void accept(@NonNull Throwable throwable) throws Exception {
                 progressBar.setVisibility(View.GONE);
-                Log.e(Constants.TAG, " onFailure: " + t.toString());
+                Log.e(Constants.TAG, " onFailure: " + throwable.toString());
                 Messages.showNetwotkError(coordinatorLayout, SearchActivity.this, query);
             }
         });
-        */
-
     }
 
     private void setData(ArrayList<ItemSearchResponse> items) {
@@ -196,21 +138,24 @@ public class SearchActivity extends AppCompatActivity implements OnItemClickList
     @Override
     public void onItemClick(final ItemSearchResponse itemSearchResponse) {
 
-        int count = mDb.channelModel().getCountChannels();
+        int count = mViewModel.countChannels();
 
         if (count < Constants.LIMIT_YOUTUBE_CHANNELS) {
-
             ChannelEntity channel = new ChannelEntity();
             channel.setId(itemSearchResponse.getSnippet().getChannelId());
             channel.setName(itemSearchResponse.getSnippet().getTitle());
             channel.setDescription(itemSearchResponse.getSnippet().getDescription());
             channel.setProfileUrl(itemSearchResponse.getSnippet().getThumbnails().getDefaultThumbnail().getUrl());
 
-            mDb.channelModel().insertChannel(channel);
+            mViewModel.insert(channel);
             channelsAdapter.notifyDataSetChanged();
-
         } else {
             Snackbar.make(resultsRecyclerView, R.string.no_add_more_channels, Snackbar.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public LifecycleRegistry getLifecycle() {
+        return lifecycleRegistry;
     }
 }

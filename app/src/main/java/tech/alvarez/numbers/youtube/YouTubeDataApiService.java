@@ -34,5 +34,11 @@ public interface YouTubeDataApiService {
     Call<ChannelsResponse> getChannels(@Query("key") String apiKey, @Query("id") String ide);
 
     @GET("channels?part=snippet,statistics,brandingSettings")
+    Observable<ChannelsResponse> getChannels2(@Query("key") String apiKey, @Query("id") String ide);
+
+    @GET("channels?part=snippet,statistics,brandingSettings")
     Call<ChannelsResponse> getChannelsWithDetails(@Query("key") String apiKey, @Query("id") String ide);
+
+    @GET("channels?part=snippet,statistics,brandingSettings")
+    Observable<ChannelsResponse> getChannelsWithDetails2(@Query("key") String apiKey, @Query("id") String ide);
 }

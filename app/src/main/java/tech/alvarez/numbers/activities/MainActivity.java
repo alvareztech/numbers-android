@@ -1,6 +1,5 @@
 package tech.alvarez.numbers.activities;
 
-import android.arch.lifecycle.LifecycleActivity;
 import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.LifecycleRegistryOwner;
 import android.arch.lifecycle.Observer;
@@ -26,10 +25,8 @@ import android.widget.RelativeLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import tech.alvarez.numbers.BuildConfig;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
 import tech.alvarez.numbers.R;
 import tech.alvarez.numbers.adapters.ChannelSubsAdapter;
 import tech.alvarez.numbers.adapters.ChannelSubsItemClickListener;
@@ -41,15 +38,11 @@ import tech.alvarez.numbers.utils.Constants;
 import tech.alvarez.numbers.utils.Messages;
 import tech.alvarez.numbers.utils.Util;
 import tech.alvarez.numbers.viewmodel.ChannelsViewModel;
-import tech.alvarez.numbers.youtube.RetrofitClient;
-import tech.alvarez.numbers.youtube.YouTubeDataApiService;
 
 public class MainActivity extends AppCompatActivity implements ChannelSubsItemClickListener, LifecycleRegistryOwner {
 
     private ChannelsViewModel mViewModel;
     private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
-
-    private Call<ChannelsResponse> call;
 
     private CoordinatorLayout coordinatorLayout;
     private FloatingActionButton fab;
@@ -200,34 +193,19 @@ public class MainActivity extends AppCompatActivity implements ChannelSubsItemCl
 
         Log.i(Constants.TAG, "  ids: " + ids);
 
-        YouTubeDataApiService service = RetrofitClient.getClient().create(YouTubeDataApiService.class);
-        call = service.getChannels(BuildConfig.YOUTUBE_DATA_API_KEY, ids);
-
-        Log.i(Constants.TAG, "  URL: " + call.request().url());
-
-        call.enqueue(new Callback<ChannelsResponse>() {
+        mViewModel.getChannelsObservable(ids).subscribe(new Consumer<ChannelsResponse>() {
             @Override
-            public void onResponse(Call<ChannelsResponse> call, Response<ChannelsResponse> response) {
-                Log.i(Constants.TAG, "   onResponse");
+            public void accept(@NonNull ChannelsResponse channelsResponse) throws Exception {
                 swipeRefreshLayout.setRefreshing(false);
-
-                if (response.isSuccessful()) {
-                    saveDatabase(response.body().getItems());
-                } else {
-                    Log.e(Constants.TAG, " Error: " + response.errorBody());
-
-                    Messages.showNetwotkError(coordinatorLayout, MainActivity.this);
-                }
+                saveDatabase(channelsResponse.getItems());
             }
-
+        }, new Consumer<Throwable>() {
             @Override
-            public void onFailure(Call<ChannelsResponse> call, Throwable t) {
+            public void accept(@NonNull Throwable throwable) throws Exception {
                 swipeRefreshLayout.setRefreshing(false);
-
                 Messages.showNetwotkError(coordinatorLayout, MainActivity.this);
             }
         });
-
     }
 
     private void saveDatabase(ArrayList<ItemResponse> items) {
@@ -305,16 +283,6 @@ public class MainActivity extends AppCompatActivity implements ChannelSubsItemCl
             openCreditsScreen();
         }
         return super.onOptionsItemSelected(item);
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(Constants.TAG, "onDestroy");
-        if (call != null) {
-            call.cancel();
-        }
     }
 
     @Override

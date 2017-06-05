@@ -4,10 +4,14 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 
-import java.util.List;
-
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import tech.alvarez.numbers.BuildConfig;
 import tech.alvarez.numbers.db.AppDatabase;
 import tech.alvarez.numbers.db.entity.ChannelEntity;
+import tech.alvarez.numbers.model.youtube.ChannelsResponse;
+import tech.alvarez.numbers.youtube.RetrofitHelper;
 
 public class ChannelViewModel extends AndroidViewModel {
 
@@ -30,5 +34,11 @@ public class ChannelViewModel extends AndroidViewModel {
 
     public void update(ChannelEntity channel) {
         mDb.channelModel().updateChannel(channel);
+    }
+
+    public Observable<ChannelsResponse> getChannelObservable(String channelId) {
+        return RetrofitHelper.getYouTubeService().getChannelsWithDetails2(BuildConfig.YOUTUBE_DATA_API_KEY, channelId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 }
