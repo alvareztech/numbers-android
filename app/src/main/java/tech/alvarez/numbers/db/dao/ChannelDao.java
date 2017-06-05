@@ -19,7 +19,7 @@ public interface ChannelDao {
     @Query("SELECT * FROM channels")
     List<ChannelEntity> getAllChannels();
 
-    @Query("SELECT * FROM channels")
+    @Query("SELECT * FROM channels ORDER BY subscribers DESC")
     LiveData<List<ChannelEntity>> findAllChannels();
 
     @Query("SELECT * FROM channels WHERE favorite=1")

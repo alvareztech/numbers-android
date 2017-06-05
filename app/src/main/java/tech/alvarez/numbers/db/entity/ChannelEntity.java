@@ -14,20 +14,20 @@ import tech.alvarez.numbers.db.converter.DateConverter;
 public class ChannelEntity {
 
     @PrimaryKey
-    private String id;
-    private String name;
-    private String description;
+    public String id;
+    public String name;
+    public String description;
     @ColumnInfo(name = "profile_url")
-    private String profileUrl;
+    public String profileUrl;
     @ColumnInfo(name = "banner_url")
-    private String bannerUrl;
-    private int subscribers;
+    public String bannerUrl;
+    public int subscribers;
     @ColumnInfo(name = "hidden_subscribers")
-    private boolean hiddenSubscribers;
-    private long views;
-    private long videos;
-    private Date update;
-    private boolean favorite;
+    public boolean hiddenSubscribers;
+    public long views;
+    public long videos;
+    public Date update;
+    public boolean favorite;
 
     public String getId() {
         return id;
