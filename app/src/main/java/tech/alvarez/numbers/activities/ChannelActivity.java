@@ -1,6 +1,8 @@
 package tech.alvarez.numbers.activities;
 
 import android.arch.lifecycle.LifecycleActivity;
+import android.arch.lifecycle.LifecycleRegistry;
+import android.arch.lifecycle.LifecycleRegistryOwner;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -8,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -40,9 +43,10 @@ import tech.alvarez.numbers.viewmodel.ChannelViewModel;
 import tech.alvarez.numbers.youtube.RetrofitClient;
 import tech.alvarez.numbers.youtube.YouTubeDataApiService;
 
-public class ChannelActivity extends LifecycleActivity {
+public class ChannelActivity extends AppCompatActivity implements LifecycleRegistryOwner {
 
     private ChannelViewModel mViewModel;
+    private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
 
     private TextView nameTextView;
     private TextView subsTextView;
@@ -89,7 +93,7 @@ public class ChannelActivity extends LifecycleActivity {
 
     private void initViews() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
+        setSupportActionBar(toolbar);
 
 
         nameTextView = (TextView) findViewById(R.id.nameTextView);
@@ -101,9 +105,9 @@ public class ChannelActivity extends LifecycleActivity {
         bannerImageView = (ImageView) findViewById(R.id.bannerImageView);
         fab = (FloatingActionButton) findViewById(R.id.fab);
 
-//        getSupportActionBar().setTitle("");
-//        getSupportActionBar().setHomeButtonEnabled(true);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("");
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
 
@@ -272,5 +276,10 @@ public class ChannelActivity extends LifecycleActivity {
         } else {
             fab.setImageResource(R.drawable.ic_star_border);
         }
+    }
+
+    @Override
+    public LifecycleRegistry getLifecycle() {
+        return lifecycleRegistry;
     }
 }

@@ -1,6 +1,8 @@
 package tech.alvarez.numbers.activities;
 
 import android.arch.lifecycle.LifecycleActivity;
+import android.arch.lifecycle.LifecycleRegistry;
+import android.arch.lifecycle.LifecycleRegistryOwner;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -9,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
@@ -41,9 +44,10 @@ import tech.alvarez.numbers.viewmodel.ChannelsViewModel;
 import tech.alvarez.numbers.youtube.RetrofitClient;
 import tech.alvarez.numbers.youtube.YouTubeDataApiService;
 
-public class MainActivity extends LifecycleActivity implements ChannelSubsItemClickListener {
+public class MainActivity extends AppCompatActivity implements ChannelSubsItemClickListener, LifecycleRegistryOwner {
 
     private ChannelsViewModel mViewModel;
+    private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
 
     private Call<ChannelsResponse> call;
 
@@ -122,7 +126,7 @@ public class MainActivity extends LifecycleActivity implements ChannelSubsItemCl
 
     private void initViews() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
+        setSupportActionBar(toolbar);
 
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
         fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -337,6 +341,11 @@ public class MainActivity extends LifecycleActivity implements ChannelSubsItemCl
     public void addFirstChannel(View view) {
         Intent intent = new Intent(this, SearchActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public LifecycleRegistry getLifecycle() {
+        return lifecycleRegistry;
     }
 }
 
