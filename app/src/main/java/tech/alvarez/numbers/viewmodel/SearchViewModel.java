@@ -1,7 +1,8 @@
 package tech.alvarez.numbers.viewmodel;
 
 import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
+
+import androidx.lifecycle.AndroidViewModel;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;

@@ -1,6 +1,7 @@
 package tech.alvarez.numbers.utils;
 
-import android.support.design.widget.Snackbar;
+import com.google.android.material.snackbar.Snackbar;
+
 import android.view.View;
 
 import tech.alvarez.numbers.R;

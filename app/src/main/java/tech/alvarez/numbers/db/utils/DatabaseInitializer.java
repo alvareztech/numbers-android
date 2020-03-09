@@ -1,7 +1,7 @@
 package tech.alvarez.numbers.db.utils;
 
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import tech.alvarez.numbers.db.AppDatabase;
 import tech.alvarez.numbers.db.entity.ChannelEntity;

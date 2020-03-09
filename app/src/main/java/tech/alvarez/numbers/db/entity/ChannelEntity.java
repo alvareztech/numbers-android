@@ -1,9 +1,10 @@
 package tech.alvarez.numbers.db.entity;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverters;
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
 import java.util.Date;
 
@@ -13,6 +14,7 @@ import tech.alvarez.numbers.db.converter.DateConverter;
 @TypeConverters(DateConverter.class)
 public class ChannelEntity {
 
+    @NonNull
     @PrimaryKey
     public String id;
     public String name;

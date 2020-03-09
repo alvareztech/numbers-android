@@ -6,18 +6,6 @@ package tech.alvarez.numbers.utils;
  */
 public class Constants {
 
-
-    // web: AIzaSyApU-WsUxe7Au_sTvQTcaZYqiVFpsYJSnk
-//    private final static String API_KEY = "AIzaSyApU-WsUxe7Au_sTvQTcaZYqiVFpsYJSnk";
-    // 2
-//    private final static String API_KEY = "AIzaSyC6vTIsfByszYzcnqrHcvgv6D_WCXVZa5A";
-    // my keystore
-//    private final static String API_KEY = "AIzaSyBmdDBoctOTk0nh73-GQK0PnxIJxpvEcGM";
-
-    //https://www.googleapis.com/youtube/v3/search?q=alvarez%20tech&api_key=AIzaSyApU-WsUxe7Au_sTvQTcaZYqiVFpsYJSnk&part=snippet,contentDetails,statistics,status&type=channel
-    /*
-    https://www.googleapis.com/youtube/v3/videos?id=7lCDEYXw3mM&key=AIzaSyApU-WsUxe7Au_sTvQTcaZYqiVFpsYJSnk&part=snippet,contentDetails,statistics,status
-     */
     public static final String YOUTUBE_DATA_BASE_URL = "https://www.googleapis.com/youtube/v3/";
 
     public static final String TAG = "NUMBERS";
@@ -32,7 +20,7 @@ public class Constants {
     public static final String YOUTUBE_CHANNEL_BASE_URL = "https://www.youtube.com/channel/";
 
     public static final String YOUTUBE_CREDITS_CHANNEL_ID = "UCQBP46vtgU0OA91xL2tl-nQ";
-    public static final String EMAIL_CREDITS = "dalvareztech@gmail.com";
+    public static final String EMAIL_CREDITS = "daniel@alvarez.tech";
 
     public static final int LIMIT_YOUTUBE_CHANNELS = 49;
 
