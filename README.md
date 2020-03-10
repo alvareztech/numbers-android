@@ -1,7 +1,8 @@
 # Numbers
 
-Show numbers and ranking for YouTube channels.
+[![@alvarez_tech](https://img.shields.io/badge/twitter-@alvarez_tech-blue.svg)](https://twitter.com/alvarez_tech)
 
+Show numbers and ranking for YouTube channels.
 
 ## Share
 
