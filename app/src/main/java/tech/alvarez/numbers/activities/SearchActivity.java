@@ -15,8 +15,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.lifecycle.LifecycleRegistry;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,7 +38,6 @@ import tech.alvarez.numbers.viewmodel.SearchViewModel;
 public class SearchActivity extends AppCompatActivity implements OnItemClickListener {
 
     private SearchViewModel mViewModel;
-    private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
 
     private RecyclerView resultsRecyclerView;
     private SearchChannelsAdapter channelsAdapter;
@@ -53,7 +51,7 @@ public class SearchActivity extends AppCompatActivity implements OnItemClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        mViewModel = ViewModelProviders.of(this).get(SearchViewModel.class);
+        mViewModel = new ViewModelProvider(this).get(SearchViewModel.class);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -153,10 +151,5 @@ public class SearchActivity extends AppCompatActivity implements OnItemClickList
         } else {
             Snackbar.make(resultsRecyclerView, R.string.no_add_more_channels, Snackbar.LENGTH_SHORT).show();
         }
-    }
-
-    @Override
-    public LifecycleRegistry getLifecycle() {
-        return lifecycleRegistry;
     }
 }

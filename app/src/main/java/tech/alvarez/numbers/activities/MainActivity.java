@@ -14,9 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -43,7 +42,6 @@ import tech.alvarez.numbers.viewmodel.ChannelsViewModel;
 public class MainActivity extends AppCompatActivity implements ChannelSubsItemClickListener {
 
     private ChannelsViewModel mViewModel;
-    private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
 
     private CoordinatorLayout coordinatorLayout;
     private FloatingActionButton fab;
@@ -62,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements ChannelSubsItemCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mViewModel = ViewModelProviders.of(this).get(ChannelsViewModel.class);
+        mViewModel = new ViewModelProvider(this).get(ChannelsViewModel.class);
 
         initViews();
         subscribeUiChannels();
@@ -310,11 +308,6 @@ public class MainActivity extends AppCompatActivity implements ChannelSubsItemCl
     public void addFirstChannel(View view) {
         Intent intent = new Intent(this, SearchActivity.class);
         startActivity(intent);
-    }
-
-    @Override
-    public LifecycleRegistry getLifecycle() {
-        return lifecycleRegistry;
     }
 }
 

@@ -14,9 +14,8 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -41,7 +40,6 @@ import tech.alvarez.numbers.viewmodel.ChannelViewModel;
 public class ChannelActivity extends AppCompatActivity {
 
     private ChannelViewModel mViewModel;
-    private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
 
     private TextView nameTextView;
     private TextView subsTextView;
@@ -63,7 +61,7 @@ public class ChannelActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_channel);
 
-        mViewModel = ViewModelProviders.of(this).get(ChannelViewModel.class);
+        mViewModel = new ViewModelProvider(this).get(ChannelViewModel.class);
 
         Intent intent = getIntent();
         channelId = intent.getStringExtra("channel_id");
@@ -246,10 +244,5 @@ public class ChannelActivity extends AppCompatActivity {
         } else {
             fab.setImageResource(R.drawable.ic_star_border);
         }
-    }
-
-    @Override
-    public LifecycleRegistry getLifecycle() {
-        return lifecycleRegistry;
     }
 }
