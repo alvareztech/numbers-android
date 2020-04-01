@@ -1,15 +1,19 @@
-# AndroidStudio excludes
-/captures
-.idea/
 *.iml
-
-# Gradle build excludes
-.gradle/
-build/
-local.properties
-gradle.properties
-
-# Misc
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
 .DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
 
+.idea/
+.gradle/
+gradle.properties
 google-services.json

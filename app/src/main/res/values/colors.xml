@@ -6,12 +6,4 @@
 
     <color name="colorAccent2">#FCD949</color>
     <color name="colorAccent3">#FCD949</color>
-
-    <color name="colorPrimaryText">#DE000000</color>
-    <color name="colorSecondaryText">#8A000000</color>
-    <color name="colorDisabledText">#61000000</color>
-
-    <color name="colorPrimaryDarkText">#FFFFFF</color>
-    <color name="colorSecondaryDarkText">#B3FFFFFF</color>
-    <color name="colorDisabledDarkText">#80FFFFFF</color>
 </resources>
