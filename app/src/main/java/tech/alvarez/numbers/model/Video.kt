@@ -12,7 +12,7 @@ data class VideoResponse(
     val items: List<Item>? = null
 )
 
-data class Item(
+data class Item2(
     @SerializedName("snippet")
     val channel: Channel? = null,
 
@@ -43,14 +43,4 @@ data class Statistics(
 
     @SerializedName("videoCount")
     val videoCount: String? = null
-)
-
-data class Thumbnails(
-    @SerializedName("default")
-    val defaultThumbnail: DefaultThumbnail? = null
-)
-
-data class DefaultThumbnail(
-    @SerializedName("url")
-    val url: String? = null
 )

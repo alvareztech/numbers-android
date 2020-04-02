@@ -7,7 +7,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import tech.alvarez.numbers.BuildConfig
-import tech.alvarez.numbers.model.ItemSearchResponse
+import tech.alvarez.numbers.model.Item
 import tech.alvarez.numbers.model.Search
 import tech.alvarez.numbers.networking.RetrofitService
 import tech.alvarez.numbers.networking.YouTubeData
@@ -15,8 +15,8 @@ import tech.alvarez.numbers.util.Constants
 
 class SearchViewModel : ViewModel() {
 
-    val channels: MutableLiveData<List<ItemSearchResponse>> by lazy {
-        MutableLiveData<List<ItemSearchResponse>>()
+    val channels: MutableLiveData<List<Item>> by lazy {
+        MutableLiveData<List<Item>>()
     }
 
     init {

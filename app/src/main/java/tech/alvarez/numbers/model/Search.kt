@@ -1,38 +1,18 @@
 package tech.alvarez.numbers.model
 
-import com.google.gson.annotations.SerializedName
-import java.util.*
+data class Search(var pageInfo: PageInfo, var items: List<Item>)
 
-data class Search(
-    @SerializedName("items")
-    var items: List<ItemSearchResponse>
+data class PageInfo(var totalResults: Int, var resultsPerPage: Int)
+
+data class Item(var snippet: Snippet?)
+
+data class Snippet(
+    var title: String?,
+    val channelId: String?,
+    val description: String?,
+    val thumbnails: Thumbnails?
 )
 
-data class ItemSearchResponse(
-    @SerializedName("snippet")
-    var snippet: SnippetSearchResponse? = null
-)
+data class Thumbnails(var default: Thumbnail?, var medium: Thumbnail?, var high: Thumbnail?)
 
-data class SnippetSearchResponse(
-    @SerializedName("title")
-    var title: String? = null,
-
-    @SerializedName("channelId")
-    val channelId: String? = null,
-
-    @SerializedName("description")
-    val description: String? = null,
-
-    @SerializedName("thumbnails")
-    val thumbnails: ThumbnailsSearchResponse? = null
-)
-
-data class ThumbnailsSearchResponse(
-    @SerializedName("default")
-    var defaultThumbnail: DefaultThumbnailSearchResponse? = null
-)
-
-data class DefaultThumbnailSearchResponse(
-    @SerializedName("url")
-    var url: String? = null
-)
+data class Thumbnail(var url: String?, var width: Int?, var height: Int?)

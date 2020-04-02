@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.search_fragment.*
 import tech.alvarez.numbers.R
 import tech.alvarez.numbers.adapters.OnItemClickListener
 import tech.alvarez.numbers.adapters.SearchChannelsAdapter
-import tech.alvarez.numbers.model.ItemSearchResponse
+import tech.alvarez.numbers.model.Item
 
 
 class SearchFragment : Fragment(), OnItemClickListener {
@@ -51,7 +51,7 @@ class SearchFragment : Fragment(), OnItemClickListener {
         })
     }
 
-    override fun onItemClick(channel: ItemSearchResponse?) {
+    override fun onItemClick(channel: Item?) {
         Toast.makeText(context, "click", Toast.LENGTH_LONG).show()
     }
 
