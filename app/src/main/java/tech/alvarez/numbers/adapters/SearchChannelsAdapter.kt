@@ -9,16 +9,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import tech.alvarez.numbers.R
-import tech.alvarez.numbers.model.ItemSearchResponse
+import tech.alvarez.numbers.model.Item
 import tech.alvarez.numbers.util.inflate
 
 interface OnItemClickListener {
-    fun onItemClick(channel: ItemSearchResponse?)
+    fun onItemClick(channel: Item?)
 }
 
 class SearchChannelsAdapter(onItemClickListener: OnItemClickListener) :
     RecyclerView.Adapter<SearchChannelsAdapter.ChannelHolder>() {
-    private var dataset: List<ItemSearchResponse> = listOf()
+    private var dataset: List<Item> = listOf()
     private val onItemClickListener: OnItemClickListener = onItemClickListener
 
     init {
@@ -34,7 +34,7 @@ class SearchChannelsAdapter(onItemClickListener: OnItemClickListener) :
         holder: ChannelHolder,
         position: Int
     ) {
-        val item: ItemSearchResponse = dataset[position]
+        val item: Item = dataset[position]
         holder.bindData(item)
         holder.setOnItemClickListener(item, onItemClickListener)
     }
@@ -51,27 +51,26 @@ class SearchChannelsAdapter(onItemClickListener: OnItemClickListener) :
         private val addButton: Button = itemView.findViewById<View>(R.id.addButton) as Button
 
         fun setOnItemClickListener(
-            channel: ItemSearchResponse?,
+            channel: Item?,
             onItemClickListener: OnItemClickListener
         ) {
             addButton.setOnClickListener { onItemClickListener.onItemClick(channel) }
         }
 
-        fun bindData(item: ItemSearchResponse) {
+        fun bindData(item: Item) {
             titleTextView.text = item.snippet?.title
             descTextView.text = item.snippet?.description
-            var url = ""
-            if (item.snippet?.thumbnails?.defaultThumbnail != null) {
-                url = item.snippet?.thumbnails?.defaultThumbnail?.url ?: ""
+            item.snippet?.thumbnails?.default?.url.let {
+
+                Glide.with(itemView.context).load(it)
+                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(photoImageView)
             }
-            Glide.with(itemView.context).load(url)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(photoImageView)
         }
     }
 
-    fun setDataset(dataset: List<ItemSearchResponse>) {
+    fun setDataset(dataset: List<Item>) {
         this.dataset = dataset
         notifyDataSetChanged()
     }
