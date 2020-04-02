@@ -15,7 +15,6 @@ import tech.alvarez.numbers.adapters.OnItemClickListener
 import tech.alvarez.numbers.adapters.SearchChannelsAdapter
 import tech.alvarez.numbers.model.Item
 
-
 class SearchFragment : Fragment(), OnItemClickListener {
 
     private lateinit var linearLayoutManager: LinearLayoutManager
@@ -45,9 +44,7 @@ class SearchFragment : Fragment(), OnItemClickListener {
         recyclerView.adapter = adapter
 
         viewModel.channels.observe(viewLifecycleOwner, Observer {
-//            Log.i(Constants.TAG, it.toString())
-            adapter.setDataset(it)
-            adapter.notifyDataSetChanged()
+            adapter.updateChannels(it)
         })
     }
 
