@@ -1,11 +1,12 @@
 package tech.alvarez.numbers.networking
 
-import Search
-import VideoResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
+import tech.alvarez.numbers.model.Channels
+import tech.alvarez.numbers.model.Search
+import tech.alvarez.numbers.model.VideoResponse
 
 interface YouTubeData {
 
@@ -28,9 +29,9 @@ interface YouTubeData {
         @Query("key") apiKey: String?,
         @Query("part") part: String?,
         @Query("type") type: String?
-    ): Call<Search?>?
+    ): Call<Search>
 
-//    @GET("search?maxResults=50")
+    //    @GET("search?maxResults=50")
 //    fun search2(
 //        @Query("q") query: String?,
 //        @Query("key") apiKey: String?,
@@ -46,11 +47,11 @@ interface YouTubeData {
 //        @Query("fields") fields: String?
 //    ): Call<VideoResponse?>?
 //
-//    @GET("channels?part=snippet,statistics,brandingSettings")
-//    fun getChannels(
-//        @Query("key") apiKey: String?,
-//        @Query("id") ide: String?
-//    ): Call<ChannelsResponse?>?
+    @GET("channels?part=snippet,statistics,brandingSettings")
+    fun getChannels(
+        @Query("key") apiKey: String?,
+        @Query("id") ide: String?
+    ): Call<Channels>
 //
 //    @GET("channels?part=snippet,statistics,brandingSettings")
 //    fun getChannels2(

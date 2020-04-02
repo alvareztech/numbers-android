@@ -1,3 +1,5 @@
+package tech.alvarez.numbers.util
+
 class Constants {
     companion object {
         const val YOUTUBE_DATA_BASE_URL = "https://www.googleapis.com/youtube/v3/"

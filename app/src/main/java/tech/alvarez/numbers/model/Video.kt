@@ -1,3 +1,5 @@
+package tech.alvarez.numbers.model
+
 import com.google.gson.annotations.SerializedName
 
 data class VideoResponse(

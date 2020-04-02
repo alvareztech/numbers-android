@@ -1,8 +1,11 @@
+package tech.alvarez.numbers.networking
+
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import tech.alvarez.numbers.util.Constants
 
-object ServiceBuilder {
+object RetrofitService {
 
     private val client = OkHttpClient.Builder().build()
 
@@ -12,7 +15,7 @@ object ServiceBuilder {
         .client(client)
         .build()
 
-    fun <T> buildService(service: Class<T>): T {
+    fun <T> createService(service: Class<T>): T {
         return retrofit.create(service)
     }
 }
