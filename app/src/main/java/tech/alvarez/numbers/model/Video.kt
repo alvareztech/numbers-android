@@ -14,33 +14,19 @@ data class VideoResponse(
 
 data class Item2(
     @SerializedName("snippet")
-    val channel: Channel? = null,
-
-    @SerializedName("statistics")
+    val channel: Channel2,
     val statistics: Statistics? = null
 )
 
-data class Channel(
-    @SerializedName("channelId")
+data class Channel2(
     val channelId: String? = null,
-
-    @SerializedName("channelTitle")
     val channelTitle: String? = null,
-
-    @SerializedName("description")
     val description: String? = null,
-
-    @SerializedName("thumbnails")
     val thumbnails: Thumbnails? = null
 )
 
 data class Statistics(
-    @SerializedName("viewCount")
     val viewCount: String? = null,
-
-    @SerializedName("subscriberCount")
     val subscriberCount: String? = null,
-
-    @SerializedName("videoCount")
     val videoCount: String? = null
 )
