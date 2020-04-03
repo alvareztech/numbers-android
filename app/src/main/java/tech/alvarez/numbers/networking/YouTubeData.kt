@@ -24,12 +24,12 @@ interface YouTubeData {
     ): Call<VideoResponse?>?
 
     @GET("search?maxResults=50")
-    fun search(
+    suspend fun search(
         @Query("q") query: String?,
         @Query("key") apiKey: String?,
         @Query("part") part: String?,
         @Query("type") type: String?
-    ): Call<Search>
+    ): Search
 
     //    @GET("search?maxResults=50")
 //    fun search2(
