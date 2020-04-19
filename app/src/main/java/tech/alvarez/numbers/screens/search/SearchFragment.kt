@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -14,6 +13,7 @@ import tech.alvarez.numbers.R
 import tech.alvarez.numbers.adapters.OnItemClickListener
 import tech.alvarez.numbers.adapters.SearchChannelsAdapter
 import tech.alvarez.numbers.model.Item
+import tech.alvarez.numbers.util.show
 
 class SearchFragment : Fragment(), OnItemClickListener {
 
@@ -50,7 +50,7 @@ class SearchFragment : Fragment(), OnItemClickListener {
     }
 
     override fun onItemClick(channel: Item?) {
-        Toast.makeText(context, "click", Toast.LENGTH_LONG).show()
+        context?.show("Clicked!")
     }
 
 }

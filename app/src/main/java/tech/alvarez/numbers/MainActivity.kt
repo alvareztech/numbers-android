@@ -1,10 +1,11 @@
 package tech.alvarez.numbers
 
 import android.os.Bundle
-import android.widget.Toast
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.Navigation
 import tech.alvarez.numbers.databinding.ActivityMainBinding
+import tech.alvarez.numbers.util.show
 
 class MainActivity : AppCompatActivity() {
 
@@ -16,9 +17,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.floatingActionButton.setOnClickListener {
-            Toast.makeText(this, "hi", Toast.LENGTH_LONG).show()
+            this.show("Open!")
             Navigation.findNavController(this, R.id.navHostFragment).navigate(R.id.searchFragment)
 //            it.findNavController().navigate(R.id.searchFragment)
+            binding.floatingActionButton.visibility = View.GONE
         }
     }
 }
